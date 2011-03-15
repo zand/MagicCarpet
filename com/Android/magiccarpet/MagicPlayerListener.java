@@ -81,8 +81,11 @@ public class MagicPlayerListener extends PlayerListener {
         if (carpet == null)
         	return;
        
-        // Check if the player moved 1 block
+        // Sets the location just under the player
         to.setY(to.getY()-1);
+        
+        // Check if the player moved 1 block
+        // TODO the next line is throwing a null pointer exception
         Location last = carpet.currentBlock.getLocation();
         if (last.getBlockX() == to.getBlockX() &&
         	last.getBlockY() == to.getBlockY() &&

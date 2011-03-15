@@ -4,8 +4,11 @@ main: com.Android.magiccarpet.MagicCarpet
 version: 1.4.4
 commands:
   mc:
-    description:
-    usage:
+    description: Puts a Carpet of glass under the players feet.
+    usage: |
+           /<command> [size]
+           Example: /<command> - Toggles the Carpet.
+           Example: /<command> 7 - Sets the size of the Carpet to be 7x7.
   magiccarpet:
     description:
     usage:

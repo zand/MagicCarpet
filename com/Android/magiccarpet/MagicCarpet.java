@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.logging.Logger;
 
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Priority;
@@ -93,11 +94,7 @@ public class MagicCarpet extends JavaPlugin {
         		if (carpet == null)
         		{
         			if (split.length < 1){
-        				player.sendMessage("A glass carpet appears below your feet.");
-        				Carpet newCarpet = new Carpet();
-        				newCarpet.setSize(5);
-        				carpets.put(player.getName(), newCarpet);
-        				playerListener.setCarpets(carpets);
+        				giveCarpet(player, 5);
         			}else{
         				try {
         					c = Integer.valueOf(split[0]);
@@ -110,11 +107,7 @@ public class MagicCarpet extends JavaPlugin {
         					player.sendMessage("The size can only be 3, 5, or 7. Please enter a proper number");
         					return false;
         				}
-        				player.sendMessage("A glass carpet appears below your feet.");
-        				Carpet newCarpet = new Carpet();
-        				newCarpet.setSize(c);
-        				carpets.put(player.getName(), newCarpet);
-        				playerListener.setCarpets(carpets);
+        				giveCarpet(player, c);
         			}
         		
         		}
@@ -136,16 +129,10 @@ public class MagicCarpet extends JavaPlugin {
         					player.sendMessage("The carpet seems to react to your words, and suddenly changes shape!");
         					carpet.changeCarpet(c);
         				}else{
-        					player.sendMessage("Poof! The magic carpet disappears.");
-                			carpets.remove(player.getName());
-                			carpet.removeCarpet();
-                			playerListener.setCarpets(carpets);
+        					removeCarpet(player);
         				}
         			}else{
-        				player.sendMessage("Poof! The magic carpet disappears.");
-            			carpets.remove(player.getName());
-            			carpet.removeCarpet();
-            			playerListener.setCarpets(carpets);
+        				removeCarpet(player);
         			}
         		
         		}
@@ -164,7 +151,6 @@ public class MagicCarpet extends JavaPlugin {
     public void setupPermissions() {
     	Plugin test = this.getServer().getPluginManager().getPlugin("Permissions");
 
-
     	if(this.Permissions == null) {
     	     if(test != null) {
     	    	 this.Permissions = (Permissions)test;
@@ -175,11 +161,36 @@ public class MagicCarpet extends JavaPlugin {
     	}
     }
     
-    public boolean isDebugging(final Player player) {
-    	return false;
+    /**
+     * Gives a carpet to a player.
+     * @param player
+     * @param size
+     */
+    public void giveCarpet(Player player, int size) {
+    	Hashtable<String, Carpet> carpets = playerListener.getCarpets();
+    	player.sendMessage("A glass carpet appears below your feet.");
+		Carpet newCarpet = new Carpet(
+				player.getLocation()
+				.getBlock()
+				.getRelative(BlockFace.DOWN),
+				size);
+		carpets.put(player.getName(), newCarpet);
+		playerListener.setCarpets(carpets);
     }
-
-    public void setDebugging(final Player player, final boolean value) { }
+    
+    public void removeCarpet(Player player) {
+    	Hashtable<String, Carpet> carpets = playerListener.getCarpets();
+    	player.sendMessage("Poof! The magic carpet disappears.");
+    	carpets.get(player.getName()).removeCarpet();
+		carpets.remove(player.getName());
+		playerListener.setCarpets(carpets);
+    }
+    
+	@Override
+	public void onLoad() {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }

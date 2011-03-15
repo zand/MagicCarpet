@@ -1,6 +1,7 @@
 package com.Android.magiccarpet;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.Material;
 
 /**
@@ -33,8 +34,9 @@ public class Carpet {
 	Block currentBlock;
 	int size = 0;
 
-	public Carpet() {
-		setSize(5);
+	public Carpet(Block currentBlock, int size) {
+		setSize(size);
+		this.currentBlock = currentBlock;
 	}
 
 	public class CarpetFiber
@@ -52,7 +54,9 @@ public class Carpet {
 
 	public CarpetFiber[] fibers;
 
-//Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
+	/**
+	 * Goes through a grid of the area underneath the player, and if the block is glass that is part of the magic carpet, it is removed
+	 */
 	public void removeCarpet() {
 		Block bl;
 		if (currentBlock == null)
@@ -60,22 +64,24 @@ public class Carpet {
 		for(int i = 0; i < fibers.length; i++)
 		{
 			bl = fibers[i].block;
-			if (fibers[i].block != null) bl.setType(Material.AIR);
+			if (bl != null) bl.setType(Material.AIR);
 			fibers[i].block = null;
 		}
 	}
 
-//Places glass in a 5x5 area underneath the player if the block was just air previously
+	/**
+	 * Places glass in a 5x5 area underneath the player if the block was just air previously
+	 */
 	public void drawCarpet() {
 		Block bl;
 		for(int i = 0; i < fibers.length; i++)
 		{
 			bl = currentBlock.getRelative(fibers[i].x,fibers[i].y,fibers[i].z);
 			if (bl.getType().equals(Material.AIR) &&
-					bl.getRelative(-1, 0, 0).getTypeId() != 81 && // 81 is Cactus
-					bl.getRelative( 1, 0, 0).getTypeId() != 81 &&
-					bl.getRelative( 0, 0, -1).getTypeId() != 81 &&
-					bl.getRelative( 0, 0, 1).getTypeId() != 81) {
+					bl.getRelative(BlockFace.NORTH).getType() != Material.CACTUS &&
+					bl.getRelative(BlockFace.SOUTH).getType() != Material.CACTUS &&
+					bl.getRelative(BlockFace.WEST).getType() != Material.CACTUS &&
+					bl.getRelative(BlockFace.EAST).getType() != Material.CACTUS) {
 				fibers[i].block = bl;
 				bl.setType(Material.GLASS);
 			} else {
@@ -90,7 +96,11 @@ public class Carpet {
 		drawCarpet();
 	}
 
-// Changes the carpet size
+	/**
+	 * Changes the MagicCarpit's size.
+	 * @param size The size to set it to.
+	 * @author zand
+	 */
 	protected void setSize(int size) {
 		if (size < 0) size -= size; // Sanity check
 		this.size = size;
